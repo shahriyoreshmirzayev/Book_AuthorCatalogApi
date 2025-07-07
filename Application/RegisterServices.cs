@@ -1,5 +1,5 @@
-﻿using Application.Mappings;
-using AutoMapper;
+﻿using Application.Abstraction;
+using Application.Services;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -13,7 +13,7 @@ public static class RegisterServices
         services.AddFluentValidation(opt => opt.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
+        services.AddScoped<ITokenService, TokenService>();
         services.AddLazyCache();
         return services;
     }

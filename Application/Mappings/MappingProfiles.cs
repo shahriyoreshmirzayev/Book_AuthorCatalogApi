@@ -2,15 +2,10 @@
 using Application.DTOs.BookDTO;
 using AutoMapper;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Mappings
 {
-    public class MappingProfiles:Profile
+    public class MappingProfiles : Profile
     {
         public MappingProfiles()
         {
@@ -34,18 +29,18 @@ namespace Application.Mappings
 
 
             CreateMap<Book, BookGetDTO>()
-                .ForMember(dest => dest.AuthorsId, 
-                opt => opt.MapFrom(src => src.Authors.Select(x=>x.Id)));
+                .ForMember(dest => dest.AuthorsId,
+                opt => opt.MapFrom(src => src.Authors.Select(x => x.Id)));
         }
 
         public void AuthorMappingRules()
         {
             CreateMap<Author, AuthorGetDTO>()
-                .ForMember(dest => dest.BooksId, 
+                .ForMember(dest => dest.BooksId,
                 opt => opt.MapFrom(src => src.Books.Select(x => x.Id)));
 
             CreateMap<AuthorCreateDTO, Author>()
-                .ForMember(dest=>dest.BirthDate, opt=>opt.MapFrom(src=>DateOnly.FromDateTime(src.BirthDate)));
+                .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.BirthDate)));
 
 
             CreateMap<AuthorUpdateDTO, Author>()
@@ -54,6 +49,6 @@ namespace Application.Mappings
 
         }
     }
-   
-   
+
+
 }

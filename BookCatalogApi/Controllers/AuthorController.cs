@@ -3,6 +3,7 @@ using Application.Repositories;
 using AutoMapper;
 using Domain.Entities;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
@@ -51,6 +52,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("[action]")]
+    [Authorize]
     public async Task<IActionResult> GetAllAuthors()
     {
         string? CachedAuthors = await _cache.GetStringAsync(_Cache_Key);

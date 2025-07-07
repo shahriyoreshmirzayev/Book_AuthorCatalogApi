@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataAccess\Migrations\20230530123447_bookDbinit.cs" />
+    <Compile Remove="DataAccess\Migrations\20230530123447_bookDbinit.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
 

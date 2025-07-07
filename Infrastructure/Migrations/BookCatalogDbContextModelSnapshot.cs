@@ -3,20 +3,17 @@ using System;
 using Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.DataAccess.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BookCatalogDbContext))]
-    [Migration("20250707124150_intialDbImv")]
-    partial class intialDbImv
+    partial class BookCatalogDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +49,6 @@ namespace Infrastructure.DataAccess.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<byte>("Gender")
@@ -91,6 +87,31 @@ namespace Infrastructure.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("Domain.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("AuthorBook", b =>
