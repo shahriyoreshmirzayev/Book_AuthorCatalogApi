@@ -1,4 +1,7 @@
 ﻿using Application.Abstraction;
+using Application.Extencions;
+using Application.Models;
+using Application.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCatalogApi.Controllers;
@@ -8,15 +11,19 @@ namespace BookCatalogApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly ITokenService _tokenService;
-    public AccountController(ITokenService tokenService)
+    private readonly IUserRrepository _userRepository;
+    public AccountController(ITokenService tokenService, IUserRrepository userRepository)
     {
         _tokenService = tokenService;
+        _userRepository = userRepository;
     }
     [HttpGet]
-    public IActionResult Login([FromQuery] string Login)
+    public IActionResult Login([FromQuery] UserCredentials userCredentials)
     {
-        if (Login == "userLogin")
+        var user = _userRepository.GetAsync(x => x.Password.GetHash() == userCredentials.Password.GetHash()
+                                                && x.Email == userCredentials.Email);
+        if (Login != null)
             return Ok(_tokenService.CreateToken());
-        return BadRequest("Login incorrect!");
+        return BadRequest("Login in password is incorrect!");
     }
 }
