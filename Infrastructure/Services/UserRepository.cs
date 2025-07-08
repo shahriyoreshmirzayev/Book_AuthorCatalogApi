@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.Services
 {
-    public class UserRepository : IUserRrepository
+    public class UserRepository : IUserRepository
     {
         private readonly IBookCatalogDbContext _bookCatalogDb;
 

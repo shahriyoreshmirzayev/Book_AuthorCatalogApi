@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Models
+namespace Application.DTOs.UserDTO
 {
-    public class UserCredentials
+    public class UserCreateDTO
     {
+        public string FullName { get; set; }
+
         [EmailAddress]
         public string Email { get; set; }
 

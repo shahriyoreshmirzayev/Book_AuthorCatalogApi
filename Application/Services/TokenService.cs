@@ -1,4 +1,5 @@
 ﻿using Application.Abstraction;
+using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,21 +15,21 @@ public class TokenService : ITokenService
     {
         _configuration = configuration;
     }
-    public string CreateToken()
+    public string CreateToken(User user)
     {
         var claims = new Claim[]
         {
-            new (ClaimTypes.Email, "SampleEmail@gmail.com")
+                new(ClaimTypes.Email, user.Email)
         };
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:IssuerKey"],
             audience: _configuration["JWT:AudienceKey"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JWT:AccesTokenLifetime"])),
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JWT:AccessTokenLifetime"])),
             signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_configuration["JWT:Key"])),
-                SecurityAlgorithms.HmacSha256Signature));
-        return new JwtSecurityTokenHandler().WriteToken(token); 
+                               new SymmetricSecurityKey(
+                                   Encoding.UTF8.GetBytes(_configuration["JWT:Key"])),
+                                   SecurityAlgorithms.HmacSha256Signature));
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

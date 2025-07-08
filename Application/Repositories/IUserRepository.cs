@@ -2,7 +2,7 @@
 
 namespace Application.Repositories;
 
-public interface IUserRrepository : IRepository<User>
+public interface IUserRepository : IRepository<User>
 {
 
 }

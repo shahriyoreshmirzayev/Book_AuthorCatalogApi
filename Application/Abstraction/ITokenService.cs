@@ -1,6 +1,8 @@
-﻿namespace Application.Abstraction;
+﻿using Domain.Entities;
+
+namespace Application.Abstraction;
 
 public interface ITokenService
 {
-    public string CreateToken();
+    public string CreateToken(User user);
 }

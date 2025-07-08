@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.AuthorDTO;
 using Application.DTOs.BookDTO;
+using Application.DTOs.UserDTO;
 using AutoMapper;
 using Domain.Entities;
 
@@ -11,6 +12,11 @@ namespace Application.Mappings
         {
             BookMappingRules();
             AuthorMappingRules();
+            UserMappingRoles();
+        }
+        private void UserMappingRoles()
+        {
+            CreateMap<UserCreateDTO, User>();
         }
 
         public void BookMappingRules()
@@ -45,10 +51,6 @@ namespace Application.Mappings
 
             CreateMap<AuthorUpdateDTO, Author>()
                 .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.BirthDate)));
-
-
         }
     }
-
-
 }

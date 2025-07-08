@@ -17,7 +17,7 @@ public static class RegisterServices
 
         services.AddScoped<IBookRepository, BookRepository>();
         services.AddScoped<IAuthorRepository, AuthorRepository>();
-        services.AddScoped<IUserRrepository, UserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 }
