@@ -24,7 +24,7 @@ public class AccountController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("[action]")]
+    [HttpPost("[action]")]
     public async Task<IActionResult> Login([FromForm] UserCredentials userCredentials)
     {
         var user = (await _userRepository.GetAsync(x => x.Password == userCredentials.Password.GetHash()

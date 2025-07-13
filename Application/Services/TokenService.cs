@@ -18,6 +18,13 @@ public class TokenService : ITokenService
     private readonly int _refreshTokenLifetime;
     private readonly int _accessTokenLifetime;
 
+    public TokenService(IConfiguration configuration, IBookCatalogDbContext dbContext)
+    {
+        _configuration = configuration;
+        _dbContext = dbContext;
+        _refreshTokenLifetime = int.Parse(configuration["JWT:RefreshTokenLifetime"]);
+        _accessTokenLifetime = int.Parse(configuration["JWT:AccessTokenLifetime"]);
+    }
     public async Task<Token> CreateTokensAsync(User user)
     {
         List<Claim> claims = new()
