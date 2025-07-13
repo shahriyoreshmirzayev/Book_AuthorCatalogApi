@@ -1,6 +1,7 @@
-using Infrastructure;
 using Application;
 using BookCatalogApi.CustomMiddlewares;
+using Infrastructure;
+using Microsoft.OpenApi.Models;
 
 namespace BookCatalogApi
 {
@@ -11,6 +12,36 @@ namespace BookCatalogApi
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationServices();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Description = "Bearer Authentication with JWT Token",
+                    Type = SecuritySchemeType.Http
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {{
+                    new OpenApiSecurityScheme()
+                    {
+                       Reference=new OpenApiReference()
+                       {
+                           Id="Bearer",
+                           Type=ReferenceType.SecurityScheme
+                       }
+                    },
+                    new List<string>()
+                } });
+            });
+
+
+
+
+
             builder.Services.AddMemoryCache(); 
             builder.Services.AddStackExchangeRedisCache(setupAction =>
             {
@@ -19,6 +50,9 @@ namespace BookCatalogApi
             builder.Services.AddResponseCaching();
             builder.Services.AddOutputCache();
             builder.Services.AddControllers();
+
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             var app = builder.Build();

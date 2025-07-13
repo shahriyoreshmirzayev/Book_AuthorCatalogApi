@@ -2,9 +2,10 @@
 using Application.DTOs.UserDTO;
 using Application.Extencions;
 using Application.Models;
+using Application.Repositories;
 using AutoMapper;
 using Domain.Entities;
-using Application.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCatalogApi.Controllers;
@@ -27,17 +28,13 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login([FromForm] UserCredentials userCredentials)
     {
         var user = (await _userRepository.GetAsync(x => x.Password == userCredentials.Password.GetHash()
-                                 && x.Email == userCredentials.Email)).FirstOrDefault();
+                                     && x.Email == userCredentials.Email)).FirstOrDefault();
         if (user != null)
         {
-            Token token = new()
-            {
-                AccessToken = _tokenService.CreateToken(user)
-            };
             RegisteredUserDTO userDTO = new()
             {
                 User = user,
-                UserTokens = token
+                UserTokens = await _tokenService.CreateTokensAsync(user)
             };
             return Ok(userDTO);
         }
@@ -55,22 +52,46 @@ public class AccountController : ControllerBase
             user = await _userRepository.AddAsync(user);
             if (user != null)
             {
-                Token token = new()
-                {
-                    AccessToken = _tokenService.CreateToken(user)
-                };
-
                 RegisteredUserDTO userDTO = new()
                 {
                     User = user,
-                    UserTokens = token
+                    UserTokens = await _tokenService.CreateTokensAsync(user)
                 };
 
-                userDTO.UserTokens = token;
                 return Ok(userDTO);
             }
         }
-        return BadRequest();
+        return BadRequest(ModelState);
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("Refresh")]
+    public async Task<IActionResult> Refresh([FromBody] Token tokens)
+    {
+        var principal = _tokenService.GetClaimsFromExpiredToken(tokens.AccessToken);
+        string? email = principal.Identity?.Name;
+        if (email == null)
+        {
+            return NotFound("Refresh token not found!");
+        }
+        RefreshToken? savedRefreshToken = _tokenService.Get(x => x.Email == email &&
+                                                  x.RefreshTokenValue == tokens.RefreshToken)
+                                                 .FirstOrDefault();
+
+        if (savedRefreshToken == null)
+        {
+            return BadRequest("Refresh token or Access token invalid!");
+        }
+        if (savedRefreshToken.ExpiredDate < DateTime.UtcNow)
+        {
+            _tokenService.Delete(savedRefreshToken);
+            return StatusCode(405, "Refresh token already expired please login again");
+        }
+        Token newTokens = await _tokenService.CreateTokensFromRefresh(principal, savedRefreshToken);
+
+        return Ok(newTokens);
+
     }
 
     [HttpGet("[action]")]
@@ -86,7 +107,6 @@ public class AccountController : ControllerBase
         if (ModelState.IsValid)
         {
             user = await _userRepository.UpdateAsync(user);
-
             return Ok(user);
         }
         return BadRequest();

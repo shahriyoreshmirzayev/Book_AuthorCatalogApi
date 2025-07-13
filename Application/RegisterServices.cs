@@ -13,8 +13,8 @@ public static class RegisterServices
         services.AddFluentValidation(opt => opt.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddScoped<ITokenService, TokenService>();
         services.AddLazyCache();
+        services.AddScoped<ITokenService, TokenService>();
         return services;
     }
 }
