@@ -29,7 +29,7 @@ public class AuthorRepository : IAuthorRepository
     {
         _bookCatalogDbContext.Authors.AttachRange(authors);
 
-        int res =await _bookCatalogDbContext.SaveChangesAsync();
+        int res = await _bookCatalogDbContext.SaveChangesAsync();
 
         if (res > 0) { return authors; }
 

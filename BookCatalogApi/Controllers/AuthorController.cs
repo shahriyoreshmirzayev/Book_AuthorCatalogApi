@@ -52,6 +52,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("[action]")]
+    // [OutputCache(Duration = 30)]
     [Authorize]
     public async Task<IActionResult> GetAllAuthors()
     {
@@ -86,11 +87,24 @@ public class AuthorController : ControllerBase
 
         if (!validresult.IsValid)
             return BadRequest(validresult);
+
+        //for (int i = 0; i < author.Books.Count; i++)
+        //{
+        //    Book book = author.Books.ToArray()[i];
+
+        //    book = await _bookRepository.GetByIdAsync(book.Id);
+        //    if (book == null)
+        //    {
+        //        return NotFound($"Book id not found");
+        //    }
+        //}
         author = await _authorRepository.AddAsync(author);
         if (author == null) return NotFound();
         AuthorGetDTO authorGet = _mapper.Map<AuthorGetDTO>(author);
         _memoryCache.Remove(_Cache_Key);
         return Ok(authorGet);
+
+
     }
 
     [HttpPut("[action]")]
@@ -110,6 +124,8 @@ public class AuthorController : ControllerBase
         _memoryCache.Remove(authorGet.Id);
         _memoryCache.Remove(_Cache_Key);
         return Ok(authorGet);
+
+
     }
 
     [HttpDelete("[action]")]
@@ -121,4 +137,5 @@ public class AuthorController : ControllerBase
         return isDelete ? Ok("Deleted successfully")
             : BadRequest("Delete operation failed");
     }
+
 }
