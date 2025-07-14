@@ -49,7 +49,7 @@ namespace BookCatalogApi.Controllers
                 return BadRequest(ModelState);
 
             User user = _mapper.Map<User>(userCreateDto);
-            List<Domain.Entities.Role> permissions = new();
+            List<Role> permissions = new();
             for (int i = 0; i < user.Roles.Count; i++)
             {
                 Role permission = user.Roles.ToArray()[i];

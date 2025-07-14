@@ -3,7 +3,6 @@ using Application.Extencions;
 using Application.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Services;
@@ -27,6 +26,20 @@ public class UserRepository : IUserRepository
 
         return null;
     }
+    //public async Task<User> AddAsync(User user, int[] roleIds)
+    //{
+    //    var roles = await _bookCatalogDb.Roles
+    //        .Where(r => roleIds.Contains(r.RoleId))
+    //        .ToListAsync();
+
+    //    user.Password = user.Password.GetHash();
+    //    user.Roles = roles;
+
+    //    await _bookCatalogDb.Users.AddAsync(user);
+    //    await _bookCatalogDb.SaveChangesAsync();
+
+    //    return user;
+    //}
 
     public Task<IEnumerable<User>> AddRangeAsync(IEnumerable<User> sync)
     {
