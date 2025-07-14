@@ -1,5 +1,7 @@
 ﻿using Application.DTOs.AuthorDTO;
 using Application.DTOs.BookDTO;
+using Application.DTOs.PermissionDTO;
+using Application.DTOs.RoleDTO;
 using Application.DTOs.UserDTO;
 using AutoMapper;
 using Domain.Entities;
@@ -12,12 +14,50 @@ namespace Application.Mappings
         {
             BookMappingRules();
             AuthorMappingRules();
-            UserMappingRoles();
+            UserMappingRules();
+            PermissionMappingRules();
+            RoleMappingRules();
         }
-        private void UserMappingRoles()
+        private void UserMappingRules()
         {
-            CreateMap<UserCreateDTO, User>();
+            CreateMap<UserCreateDTO, User>()
+                .ForMember(dest => dest.Roles,
+                           opt => opt.MapFrom(src => src.RolesId
+                              .Select(x => new Role() { RoleId = x })));
+
+            CreateMap<User, UserGetDTO>()
+                .ForMember(dest => dest.RolesId,
+                           opt => opt.MapFrom(src => src.Roles.Select(x => x.RoleId)));
+
+            CreateMap<UserUpdateDTO, User>()
+               .ForMember(dest => dest.Roles,
+                          opt => opt.MapFrom(src => src.RolesId
+                             .Select(x => new Role() { RoleId = x })));
         }
+        private void PermissionMappingRules()
+        {
+            CreateMap<PermissionCreateDTO, Permission>();
+        }
+        private void RoleMappingRules()
+        {
+            CreateMap<RoleCreateDTO, Role>()
+                .ForMember(dest => dest.Permissions,
+                           opt => opt.MapFrom(src => src.PermissionsId
+                              .Select(x => new Permission() { PermissionId = x })));
+
+            CreateMap<Role, RoleGetDTO>()
+                .ForMember(dest => dest.PermissionsId,
+                           opt => opt.MapFrom(src => src.Permissions.Select(x => x.PermissionId)));
+
+            CreateMap<RoleUpdateDTO, Role>()
+                .ForMember(dest => dest.Permissions,
+                           opt => opt.MapFrom(src => src.PermissionsId
+                              .Select(x => new Permission() { PermissionId = x })));
+        }
+        //private void UserMappingRoles()
+        //{
+        //    CreateMap<UserCreateDTO, User>();
+        //}
 
         public void BookMappingRules()
         {

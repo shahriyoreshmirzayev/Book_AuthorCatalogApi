@@ -43,8 +43,6 @@ public class BookRepository : IBookRepository
             if (res > 0) return true;
         }
         return false;
-
-
     }
 
     public Task<IQueryable<Book>> GetAsync(Expression<Func<Book, bool>> predicate)

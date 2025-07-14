@@ -1,6 +1,8 @@
 ﻿using Application.Abstraction;
+using Application.Extencions;
 using Application.Repositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -17,6 +19,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User> AddAsync(User user)
     {
+        user.Password = user.Password.GetHash();
         _bookCatalogDb.Users.Add(user);
 
         int res = await _bookCatalogDb.SaveChangesAsync();
@@ -42,21 +45,42 @@ public class UserRepository : IUserRepository
         return false;
     }
 
-    public Task<IQueryable<User>> GetAsync(Expression<Func<User, bool>> predicate)
+    public async Task<IQueryable<User>> GetAsync(Expression<Func<User, bool>> predicate)
     {
-        return Task.FromResult(_bookCatalogDb.Users.Where(predicate));
+        return _bookCatalogDb.Users.Where(predicate).Include(x => x.Roles);
     }
 
-    public async Task<User> GetByIdAsync(int Id)
+    public Task<User?> GetByIdAsync(int Id)
     {
-        return await _bookCatalogDb.Users.FindAsync(Id);
+        return Task.FromResult(_bookCatalogDb.Users.Where(x => x.Id.Equals(Id))
+            .Include(x => x.Roles)
+            .SingleOrDefault());
     }
 
     public async Task<User> UpdateAsync(User user)
     {
-        _bookCatalogDb.Users.Update(user);
-        int res = await _bookCatalogDb.SaveChangesAsync();
-        if (res > 0) return user;
+        var existingUser = await GetByIdAsync(user.Id);
+        if (existingUser != null)
+        {
+            existingUser.FullName = user.FullName;
+            existingUser.Email = user.Email;
+
+            existingUser.Roles.Clear();
+            foreach (var permission in user.Roles)
+            {
+                var existingPermission = _bookCatalogDb.Roles.Find(permission.RoleId);
+                if (existingPermission != null)
+                {
+                    existingUser.Roles.Add(existingPermission);
+                }
+            }
+
+            int res = await _bookCatalogDb.SaveChangesAsync();
+            if (res > 0)
+            {
+                return user;
+            }
+        }
         return null;
     }
 }

@@ -67,6 +67,5 @@ public class AuthorRepository : IAuthorRepository
         if (res > 0) { return author; }
 
         return null;
-
     }
 }

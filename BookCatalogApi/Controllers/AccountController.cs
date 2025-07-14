@@ -28,7 +28,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login([FromForm] UserCredentials userCredentials)
     {
         var user = (await _userRepository.GetAsync(x => x.Password == userCredentials.Password.GetHash()
-                                     && x.Email == userCredentials.Email)).FirstOrDefault();
+                                 && x.Email == userCredentials.Email)).FirstOrDefault();
         if (user != null)
         {
             RegisteredUserDTO userDTO = new()
@@ -62,7 +62,9 @@ public class AccountController : ControllerBase
             }
         }
         return BadRequest(ModelState);
+
     }
+
 
     [HttpPost]
     [AllowAnonymous]
@@ -94,11 +96,14 @@ public class AccountController : ControllerBase
 
     }
 
+
     [HttpGet("[action]")]
     public async Task<IActionResult> GetAllUsers()
     {
         IQueryable<User> res = await _userRepository.GetAsync(x => true);
+
         return Ok(res);
+
     }
 
     [HttpPut("[action]")]
@@ -107,8 +112,10 @@ public class AccountController : ControllerBase
         if (ModelState.IsValid)
         {
             user = await _userRepository.UpdateAsync(user);
+
             return Ok(user);
         }
         return BadRequest();
+
     }
 }
