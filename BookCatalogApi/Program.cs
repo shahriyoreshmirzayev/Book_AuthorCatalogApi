@@ -10,6 +10,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        //builder.WebHost.UseUrls("http://+:80");
         builder.Services.AddInfrastructureServices(builder.Configuration);
         builder.Services.AddApplicationServices();
 
@@ -50,7 +51,6 @@ public class Program
         builder.Services.AddResponseCaching();
         builder.Services.AddOutputCache();
         builder.Services.AddControllers();
-
 
 
         builder.Services.AddEndpointsApiExplorer();
